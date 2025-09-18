@@ -1,0 +1,837 @@
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  margin: 20px;
+  background:
+  linear-gradient(rgba(0,0,0,.20), rgba(0,0,0,.20)),
+  url("assets/bg/pflng.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+  color: #333;
+  line-height: 1.6; 
+  @media (max-width: 768px) {
+  body { background-attachment: scroll; } /* for mobile */
+}
+
+}
+
+/* Headings */
+h1, h2 {
+  margin-bottom: 10px;
+  color: #38B09D;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Textareas */
+textarea {
+  width: 100%;
+  height: 120px;
+  font-family: monospace;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  transition: all 0.2s ease;
+}
+textarea:focus {
+  border-color: #38B09D;
+  box-shadow: 0 0 6px rgba(0, 122, 204, 0.2);
+  outline: none;
+}
+
+/* Inputs, selects, and buttons */
+input, select, button {
+  padding: 8px 10px;
+  font-size: 14px;
+  margin-top: 4px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  transition: all 0.2s ease;
+}
+input:focus, select:focus {
+  border-color: #38B09D;
+  outline: none;
+  box-shadow: 0 0 6px rgba(0, 122, 204, 0.2);
+}
+
+/* Buttons */
+button {
+  cursor: pointer;
+  background: #38B09D;
+  color: white;
+  font-weight: 600;
+  border: none;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.rules-toolbar {
+  display: flex;
+  justify-content: flex-end; /* ⬅️ push buttons to the right */
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+button:hover:not(:disabled) {
+  background: #005fa3;
+  transform: translateY(-1px);
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background: #ccc;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+th {
+  background: #38B09D;
+  color: white;
+}
+
+/* General zebra striping with good contrast on translucent cards */
+table tr:nth-child(odd)  { background: rgba(255,255,255,0.96); }
+table tr:nth-child(even) { background: rgba(245,248,250,0.96); }
+
+/* Stronger zebra for the Bad Data preview table */
+#badDataTable tr:nth-child(odd)  { background: rgba(255,255,255,0.98); }
+#badDataTable tr:nth-child(even) { background: rgba(241,245,249,0.98); }
+
+/* Bad-marked rows: override zebra with a saturated, opaque background */
+table tr.bad,
+#badDataTable tr.bad {
+  background: rgba(253, 236, 234, 1) !important; /* nearly solid */
+  color: #7f1d1d;
+  font-weight: 600;
+}
+
+/* Rule cards */
+.rule {
+  border: 1px solid #ddd;
+  background: #fff;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.rule:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.rule-desc {
+  max-width: 80%;
+  color: #333;
+}
+/* Rule Buttons*/
+.rule button {
+  margin-left: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+}
+
+.rule button:nth-child(2) {
+  background: #d9534f; /* Remove button - red */
+}
+
+.rule button:nth-child(3) {
+  background: #4CAF50; /* Duplicate button - green */
+}
+
+.rule button:nth-child(4) {
+  background: #FF9800; /* Edit button - orange */
+}
+
+.rule button:hover {
+  opacity: 0.9;
+}
+
+
+/* Rules list container */
+#rulesList {
+  max-height: 240px;
+  overflow-y: auto;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.03);
+}
+
+/* Flex containers */
+.flex {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+label {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* Parameter inputs */
+#paramInputs > div {
+  margin-top: 8px;
+}
+
+/* Dashboard styling */
+.dashboard {
+  margin-top: 20px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  animation: fadeIn 0.4s ease;
+}
+.dashboard h2 {
+  color: #38B09D;
+}
+.dashboard .charts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: 20px;
+}
+.chart-container {
+  flex: 1 1 320px;
+  min-width: 320px;
+  max-width: 600px;
+  margin: 0 auto;
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Scorecards */
+.scorecard {
+  background: linear-gradient(135deg, #38B09D, #005fa3);
+  color: white;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  min-width: 200px;
+  flex: 1 1 220px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+.scorecard:hover {
+  transform: translateY(-3px);
+}
+.scorecard h3 {
+  margin-bottom: 10px;
+}
+.scorecard p {
+  font-size: 26px;
+  margin: 6px 0;
+  font-weight: 700;
+}
+
+/* Bad data preview */
+#badDataTableContainer {
+  margin-top: 20px;
+  display: none;
+}
+#badDataTable {
+  max-height: 250px;
+  overflow-y: auto;
+  display: block;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+/* Scroll container */
+#badDataTableWrapper {
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-tab {
+  padding: 6px 10px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  background: #f7f7f7;
+  white-space: nowrap;
+  user-select: none;
+}
+.profile-tab.active {
+  background: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 0 #fff inset;
+}
+/* ---- Profiling chart fixed-size wrapper ---- */
+.profile-chart-wrapper {
+  position: relative;
+  height: 180px;      /* Adjust to taste: e.g., 160–220 */
+  max-height: 180px;  /* Prevent vertical growth */
+  overflow: hidden;
+}
+
+/* Make the canvas fill the wrapper */
+#profileChart {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+.rule-btn .icon {
+  font-size: 18px;
+  vertical-align: middle;
+  pointer-events: none;
+}
+
+.rule-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Optional: Tooltip on hover using the title attribute */
+.rule-btn[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 50%;
+  bottom: 110%;
+  transform: translateX(-50%);
+  background: #222;
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0.95;
+  z-index: 10;
+}
+/* ---- Profiling chart fixed-size wrapper ---- */
+.profile-chart-wrapper {
+  position: relative;
+  height: 180px;      /* compact; adjust to taste */
+  max-height: 180px;
+  overflow: hidden;
+}
+
+/* Make the canvas fill the wrapper */
+#profileChart {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Histogram controls */
+.hist-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+.hist-controls input[type="range"] {
+  accent-color: #38B09D;
+}
+
+/* Translucent, blurred card backgrounds for readability */
+.dashboard,
+#profileContent,
+#rulesList,
+.profile-tabs,
+#profilingSection,
+.rules-toolbar,
+#tableOverview,
+.hist-controls {
+  background: rgba(255, 255, 255, 0.67); /* White, mostly see-through */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px); /* For Safari */
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+}
+
+/* Optional: make headings stand out a bit more */
+h1, h2, h3, h4 {
+  text-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.dashboard,
+#profileContent,
+#rulesList,
+.profile-tabs,
+#profilingSection,
+.rules-toolbar,
+#tableOverview,
+.hist-controls {
+  border: 1px solid rgba(0,0,0,0.08);
+}
+button, input, select {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+/* Make all labels, select, and input text light for readability */
+label,
+input[type="file"],
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+select,
+textarea {
+  color: #f7f7f7 !important;
+  background-color: rgba(30,30,30,0.18) !important;
+  /* Optional: add a subtle shadow for even more contrast */
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+
+/* Make placeholder text light too */
+input::placeholder,
+textarea::placeholder {
+  color: #e0e0e0 !important;
+  opacity: 1 !important;
+}
+
+/* File input button (the "Choose File" or "No file chosen" text) */
+input[type="file"]::-webkit-file-upload-button {
+  color: #f7f7f7 !important;
+  background: #38B09D !important;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+input[type="file"]::-ms-browse {
+  color: #f7f7f7 !important;
+  background: #38B09D !important;
+}
+
+/* For Firefox */
+input[type="file"]::file-selector-button {
+  color: #f7f7f7 !important;
+  background: #38B09D !important;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+/* Unified, high-contrast styling for all <select> controls */
+select {
+  color: #ffffff;
+  background-color: rgba(0,0,0,0.36);
+  border: 1px solid rgba(255,255,255,0.40);
+  border-radius: 6px;
+
+  /* remove native styling & add a consistent arrow */
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+
+  /* simple white caret via data URI SVG */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'><path fill='white' d='M1 1l6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 32px; /* space for caret */
+}
+
+/* Focus ring for accessibility */
+select:focus {
+  outline: 2px solid #38B09D;
+  outline-offset: 2px;
+}
+r: #fff !important;
+}
+
+/* For file input button ("No file chosen", "Upload CSV file") */
+input[type="file"] {
+  color: #fff !important;
+  background: rgba(56,176,157,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+/* For placeholder text in inputs and textareas */
+input::placeholder,
+textarea::placeholder {
+  color: #e0e0e0 !important;
+  opacity: 1;
+}
+
+/* For disabled inputs/selects */
+input:disabled,
+select:disabled {
+  color: #bbb !important;
+  background: rgba(255,255,255,0.25);
+}
+
+/* For dropdown options (some browsers) */
+select option {
+  background: rgba(56,176,157,0.15);
+  color: #222; /* fallback for dropdowns, can be #fff if you prefer */
+}
+button {
+  color: #fff !important;
+  background: #38B09D;
+  border: none;
+}
+
+h1, h2, h3, h5, h6 {
+  color: #fff !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+label,
+input,
+select,
+option,
+textarea {
+  text-shadow: 0 1px 4px rgba(0,0,0,0.18);
+}
+/* Make labels and the 3 selects share the same foreground */
+label[for="colSelect"],
+label[for="dataTypeSelect"],
+label[for="conditionSelect"],
+#colSelect,
+#dataTypeSelect,
+#conditionSelect {
+  color: #ffffff !important;
+}
+/* High-contrast popup list for dropdown options */
+select option,
+select optgroup {
+  background: #ffffff;
+  color: #0f172a; /* very dark slate */
+}
+
+/* In dark color schemes some UAs invert colors—hint we want our colors */
+select { color-scheme: light; }
+
+/* Pop text with colored glow and shadow */
+.pop-text {
+  color: #2ECC71 !important;
+  font-weight: 600;
+  text-shadow:
+    0 0 8px #38B09D,         /* colored glow (teal, matches your theme) */
+    0 2px 8px rgba(0,0,0,0.45), /* strong dark shadow for readability */
+    0 1px 2px rgba(0,0,0,0.25); /* subtle shadow for depth */
+  letter-spacing: 0.5px;
+  font-size: 1.08em;
+}
+
+/* === DQ Results Tabs (reuses your profile-tab look) === */
+.profile-tabs {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-top: 12px;
+}
+
+#dqResultsSection {
+  margin-top: 16px;
+}
+
+/* Panels shown/hidden by tab selection */
+.dq-panel { display: none; }
+.dq-panel.active { display: block; }
+
+/* Simple inline alert for empty bad-data state */
+.alert {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #fff3cd;
+  color: #7c5e10;
+  border: 1px solid #ffeeba;
+  border-radius: 6px;
+}
+
+/* Make Preview Bad Data button disappear since it's now a tab */
+#previewBadBtn { display: none !important; }
+
+/* === DQ Dashboard layout & polish === */
+.dashboard {
+  margin-top: 20px;
+  padding: 20px 20px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+}
+
+/* KPI grid */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+  margin: 8px 0 14px;
+}
+
+.scorecard {
+  background: linear-gradient(135deg, #38B09D, #0d6efd);
+  color: #fff;
+  border-radius: 12px;
+  padding: 16px 16px 12px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 4px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+.scorecard h3 {
+  margin: 2px 0 0;
+  font-size: 15px;
+  opacity: 0.95;
+  letter-spacing: .3px;
+}
+.scorecard p {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+.scorecard .delta {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: rgba(255,255,255,.18);
+  color: #fff;
+}
+.delta.up::before { content: "▲"; color: #2ECC71; }
+.delta.down::before { content: "▼"; color: #FF6B6B; }
+.delta.flat::before { content: "–"; color: #fff; }
+
+/* Charts grid */
+.dashboard .charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 18px;
+  margin-top: 16px;
+}
+.chart-container {
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
+  padding: 14px 14px 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+.chart-container h4 {
+  margin: 0 0 8px;
+  color: #1a2233;      /* Very dark blue-gray for strong contrast */
+  font-weight: 800;    /* Extra bold for clarity */
+  letter-spacing: 0.2px;
+  font-size: 1.08em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.07); /* subtle depth, optional */
+}
+
+
+/* New canvases obey a predictable height */
+.chart-container canvas {
+  display: block;
+  width: 100% !important;
+  height: auto !important; 
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+
+/* Empty-state text for chart cards */
+.chart-empty {
+  padding: 10px 12px;
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #7c5e10;
+  border-radius: 8px;
+  font-size: 13px;
+}
+//to make it look good on mobile
+@media (max-width: 600px) {
+  .chart-container, .chart-container canvas {
+    max-width: 98vw;
+    min-width: 0;
+  }
+}
+.chart-container h4,
+#card-badPieChart h4,
+#card-goodBadDonut h4,
+#card-badByColumnChart h4,
+#card-badByRuleChart h4 {
+  color: #1a2233 !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+  background: none !important;
+}
+
+#analysisPanel {
+  padding: 18px 20px;
+  background: rgba(255,255,255,0.92);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  font-size: 15px;
+}
+#analysisPanel h4 {
+  color: #1a2233;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+#analysisPanel ul {
+  margin-left: 18px;
+}
+/* Analysis cards polish */
+#analysisPanel .chart-empty {
+  margin-top: 8px;
+}
+#analysisPanel code {
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.modal.hidden { display: none; }
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: grid; place-items: center; z-index: 9999; }
+.modal-content { width: 720px; max-width: 95vw; background: #fff; border-radius: 12px; padding: 16px 18px; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+.modal-header { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:8px; }
+.modal-body { padding-top:12px; }
+.icon { background:none;border:none;font-size:24px;cursor:pointer; }
+.primary { background:#007acc; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.grid2 label { display:flex; flex-direction:column; gap:4px; }
+.row { display:flex; align-items:center; gap:10px; margin-top:10px; }
+.muted { color:#666; }
+.preview { max-height:200px; overflow:auto; border:1px solid #eee; margin-top:10px; border-radius:6px; }
+.preview table { width:100%; border-collapse:collapse; font-size:13px; }
+.preview th, .preview td { border:1px solid #f0f0f0; padding:4px 6px; }
+
+
+/* Modal overlay: darker, more opaque */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 24, 40, 0.85); /* much darker overlay */
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+}
+
+/* Modal content: dark card with light text */
+.modal-content {
+  width: 720px;
+  max-width: 95vw;
+  background: #23263a; /* deep navy/gray */
+  color: #f3f6fa;      /* light text for contrast */
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.45);
+  border: 1px solid #2d3148;
+}
+
+/* Modal header: slightly lighter for separation */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #35395a;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  background: transparent;
+}
+
+/* Modal body: keep background dark */
+.modal-body {
+  padding-top: 12px;
+  background: transparent;
+}
+
+/* Inputs: dark background, light text */
+.modal input,
+.modal select {
+  background: #181a28;
+  color: #f3f6fa;
+  border: 1px solid #35395a;
+  border-radius: 6px;
+  padding: 7px 10px;
+  margin-top: 2px;
+}
+
+.modal input:focus,
+.modal select:focus {
+  outline: 2px solid #007acc;
+  background: #23263a;
+}
+
+/* Buttons: high contrast */
+.modal button,
+.modal .primary {
+  background: #007acc;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.modal .icon {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #f3f6fa;
+  cursor: pointer;
+}
+
+.modal .icon:hover {
+  color: #ff6b6b;
+}
+
+/* Table preview: dark table */
+.preview table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: #181a28;
+  color: #f3f6fa;
+}
+
+.preview th, .preview td {
+  border: 1px solid #35395a;
+  padding: 4px 6px;
+}
+
+.muted {
+  color: #b0b6c8;
+}
+

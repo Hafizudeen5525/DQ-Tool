@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gas Business Data Profiling Tool & Dashboard</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<h1>Gas Business Data Profiling Tool</h1>
+
+
+<section>
+  <label for="csvInput">Paste CSV Data Here (comma separated):</label>
+  <textarea id="csvInput" placeholder="e.g. id,name,age\n1,John,25\n2,Anna,"></textarea>
+
+  <div class="flex" style="margin-top:8px; align-items:center;">
+    <label for="fileInput" style="margin:0;">Or upload CSV file:</label>
+    <input type="file" id="fileInput" accept=".csv,text/csv" />
+  </div>
+<!-- Get Data  -->
+<button id="getDataBtn" class="primary">Get Data</button>
+
+<div id="getDataModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="getDataTitle">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="getDataTitle">Get Data — PostgreSQL</h3>
+      <button id="closeGetData" class="icon">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="grid2">
+        <label>Host
+          <input type="text" id="pgHost" placeholder="e.g., db.mycompany.com or 10.0.0.5" required>
+        </label>
+        <label>Port
+          <input type="number" id="pgPort" placeholder="5432" value="5432">
+        </label>
+        <label>Database
+          <input type="text" id="pgDatabase" placeholder="database name" required>
+        </label>
+        <label>Username
+          <input type="text" id="pgUser" placeholder="db user" required>
+        </label>
+        <label>Password
+          <input type="password" id="pgPassword" placeholder="password" required>
+        </label>
+        <label>SSL
+          <select id="pgSSL">
+            <option value="true">Enabled</option>
+            <option value="false" selected>Disabled (dev)</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="connActions" class="row">
+        <button id="btnTestConn">Test connection</button>
+        <button id="btnConnect" class="primary">Connect</button>
+        <span id="connStatus" class="muted"></span>
+      </div>
+
+      <div id="tablePicker" class="hidden">
+        <div class="grid2">
+          <label>Schema
+            <select id="pgSchema"></select>
+          </label>
+          <label>Table
+            <select id="pgTable"></select>
+          </label>
+        </div>
+        <div class="row">
+          <button id="btnPreview">Preview</button>
+          <button id="btnLoad" class="primary">Load</button>
+          <span id="previewStatus" class="muted"></span>
+        </div>
+        <div id="previewArea" class="preview"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</section>
+
+<!-- ACTIONS: add the Profile Data button -->
+<button id="profileBtn" disabled>Profile Data</button>
+
+<!-- PROFILING SECTION -->
+<section id="profilingSection" style="display:none; margin-top:16px;">
+  <!-- Overview (default panel) -->
+  <div id="tableOverview"
+       style="padding:10px; background:#fafafa; border:1px solid #e6e6e6; border-radius:6px; margin-bottom:10px;"></div>
+
+  <!-- Tabs -->
+  <div id="profileTabs" class="profile-tabs"
+       style="display:flex; gap:8px; overflow-x:auto; border-bottom:1px solid #ddd; margin-bottom:8px;"></div>
+
+  <!-- Histogram controls (numeric columns only) -->
+  <div id="histControls" class="hist-controls" style="display:none; margin:4px 0 10px; gap:8px; align-items:center;">
+    <label for="binCountRange" style="font-weight:600;">Bins</label>
+    <input type="range" id="binCountRange" min="3" max="60" step="1" value="10" style="flex:1;"/>
+    <input type="number" id="binCountInput" min="3" max="60" step="1" value="10" style="width:80px;"/>
+    <span id="binWidthLabel" style="color:#666; font-size:13px;"></span>
+  </div>
+
+  <!-- Fixed-height chart wrapper to prevent infinite vertical growth -->
+  <div class="profile-chart-wrapper">
+    <canvas id="profileChart"></canvas>
+  </div>
+
+  <div id="profileStats" style="margin-top:10px; line-height:1.6;"></div>
+</section>
+
+
+
+<hr>
+
+<section>
+  <h2>Define Data Quality Rules</h2>
+
+  <div class="flex" style="align-items: flex-start; gap:10px;">
+    <div class="flex-column" style="min-width:160px;">
+      <label for="colSelect">Column:</label>
+      <select id="colSelect" disabled><option>Load CSV first</option></select>
+    </div>
+
+    <div class="flex-column" style="min-width:160px;">
+      <label for="dataTypeSelect">Data Type:</label>
+      <select id="dataTypeSelect" disabled>
+        <option value="">Select type</option>
+        <option value="string">String</option>
+        <option value="numeric">Numeric</option>
+        <option value="integer">Integer</option>
+        <option value="date">Date</option>
+      </select>
+    </div>
+
+    <div class="flex-column" style="min-width:220px;">
+      <label for="conditionSelect">Condition:</label>
+      <select id="conditionSelect" disabled>
+        <option value="">Select condition</option>
+      </select>
+    </div>
+
+    <div class="flex-column" id="paramInputs" style="min-width:280px;">
+      <!-- dynamic param inputs appear here -->
+    </div>
+
+    <div class="flex-column" style="flex:1; min-width: 200px;">
+      <label for="conditionPreview">Condition Preview (JS using <code>value</code>):</label>
+      <input type="text" id="conditionPreview" readonly style="background:#eee; font-family: monospace;" />
+    </div>
+
+    <div style="align-self:flex-end;">
+      <button id="addRuleBtn" disabled>Add Rule</button>
+    </div>
+  </div>
+
+  <div id="rulesList">
+    <p>No rules added yet.</p>
+  </div>
+</section>
+
+<div class="rules-toolbar">
+  <button id="exportRulesBtn" disabled>Export Rules</button>
+  <button id="importRulesBtn">Import Rules</button>
+  <input type="file" id="importRulesInput" accept="application/json" style="display:none;">
+</div>
+
+<hr>
+
+<section class="flex" style="gap: 15px; align-items: center; flex-wrap: wrap;">
+  <button id="runRulesBtn" disabled>Run Data Quality Checks</button>
+  <button id="previewBadBtn" disabled>Preview Bad Data</button>
+</section>
+
+<section class="dashboard" aria-label="Data Quality Dashboard" style="display:none;">
+  <h2>Data Quality Dashboard</h2>
+
+  <div class="flex" style="gap: 20px; flex-wrap: wrap; align-items: stretch;">
+    <div class="scorecard" aria-label="Summary Scorecard">
+      <h3>Total Rows</h3>
+      <p id="totalRows">0</p>
+      <h3>Bad Rows</h3>
+      <p id="badRows">0</p>
+      <h3>Overall Data Quality Score %</h3>
+      <p id="goodPercent">100%</p>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="radarChart" aria-label="Radar chart of data quality dimensions"></canvas>
+    </div>
+  </div>
+
+  <div class="charts" style="margin-top: 40px;">
+    <div class="chart-container">
+      <h4>Bad Data by Dimension</h4>
+      <canvas id="badPieChart" aria-label="Pie chart showing distribution of bad data by dimension"></canvas>
+    </div>
+  </div>
+</section>
+
+<section id="badDataTableContainer">
+  <h2>Bad Data Rows</h2>
+  <div id="badDataTableWrapper">
+    <table id="badDataTable"></table>
+  </div>
+</section>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
